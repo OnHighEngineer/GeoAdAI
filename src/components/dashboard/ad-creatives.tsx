@@ -45,7 +45,7 @@ export function AdCreatives({ creatives }: AdCreativesProps) {
               PlaceHolderImages[index % PlaceHolderImages.length];
             return (
               <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
-                <div className="p-1">
+                <div className="p-1 h-full">
                   <Card className="h-full flex flex-col group overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
                     <CardHeader>
                       {placeholder && (
@@ -67,11 +67,11 @@ export function AdCreatives({ creatives }: AdCreativesProps) {
                         For: {creative.segment_name}
                       </CardDescription>
                     </CardHeader>
-                    <CardContent className="flex-grow">
-                      <p className="text-muted-foreground">
+                    <CardContent className="flex-grow space-y-4">
+                      <p className="text-muted-foreground text-justify">
                         {creative.primary_text}
                       </p>
-                      <p className="text-sm text-primary font-semibold mt-4 italic">
+                      <p className="text-sm text-primary font-semibold italic">
                         "{creative.geo_context_hook}"
                       </p>
                     </CardContent>
