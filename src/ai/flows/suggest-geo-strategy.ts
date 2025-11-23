@@ -37,7 +37,7 @@ RULES:
 
 OUTPUT SCHEMA:
 
-{{ zodSchema output }}
+{{- zodSchema output -}}
 
 NOW USE THIS USER INPUT:
 

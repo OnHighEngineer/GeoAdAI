@@ -41,7 +41,7 @@ RULES:
 - Respond with VALID JSON ONLY. No explanation text.
 
 OUTPUT SCHEMA:
-{{ zodSchema output }}
+{{- zodSchema output -}}
 
 NOW USE THIS USER INPUT:
 

@@ -27,7 +27,7 @@ const prompt = ai.definePrompt({
   prompt: `You are an AI Geo-Contextual Ad Targeting Engine that outputs data for a web dashboard.\n\nYour goal:\nGiven a user's business + location + objective, generate a geo-targeted ad plan.\nThe output MUST be structured so that a frontend dashboard can render:\n- KPI cards
 - Geo strategy section
 - Audience segments list
-- Creatives list\n\nRULES:\n- DO NOT use or infer sensitive traits (religion, caste, race, health, sexual orientation, political views).\n- Use only location, generic demographics, interests, device type, and time behavior.\n- Respond with VALID JSON ONLY. No explanation text.\n\nOUTPUT SCHEMA:\n\n{{ zodSchema output }}
+- Creatives list\n\nRULES:\n- DO NOT use or infer sensitive traits (religion, caste, race, health, sexual orientation, political views).\n- Use only location, generic demographics, interests, device type, and time behavior.\n- Respond with VALID JSON ONLY. No explanation text.\n\nOUTPUT SCHEMA:\n\n{{- zodSchema output -}}
 `,
 });
 

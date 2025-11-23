@@ -9,73 +9,11 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { AdPlanInputSchema, AdPlanOutputSchema } from './schemas';
 
-const GenerateAdCreativesInputSchema = z.object({
-  business_name: z.string().describe('The name of the business.'),
-  business_description: z.string().describe('A description of the business.'),
-  campaign_objective: z.string().describe('The objective of the ad campaign.'),
-  country: z.string().describe('The country where the ad will be targeted.'),
-  city: z.string().describe('The city where the ad will be targeted.'),
-  area: z.string().describe('The specific area or neighborhood for ad targeting.'),
-  urban_type: z.string().describe('The type of urban environment (e.g., suburban, downtown).'),
-  budget_level: z.string().describe('The budget level for the ad campaign (low, medium, or high).'),
-  preferred_channels: z.string().describe('The preferred advertising channels (e.g., Mobile, In-app, Display).'),
-  target_customer_notes: z.string().describe('Notes about the target customer for the ad campaign.'),
-});
-export type GenerateAdCreativesInput = z.infer<typeof GenerateAdCreativesInputSchema>;
 
-const GenerateAdCreativesOutputSchema = z.object({
-  kpis: z.object({
-    estimated_reach: z.number(),
-    estimated_ctr_percent: z.number(),
-    confidence_score_percent: z.number(),
-    budget_level: z.enum(['low', 'medium', 'high']),
-  }),
-  campaign_overview: z.object({
-    title: z.string(),
-    summary: z.string(),
-    primary_objective: z.string(),
-  }),
-  geo_strategy: z.object({
-    city: z.string(),
-    primary_area: z.string(),
-    recommended_radius_km: z.number(),
-    target_regions: z.array(
-      z.object({
-        name: z.string(),
-        priority: z.enum(['high', 'medium', 'low']),
-        reason: z.string(),
-      })
-    ),
-    time_windows: z.array(
-      z.object({
-        label: z.string(),
-        hours_local: z.string(),
-        reason: z.string(),
-      })
-    ),
-  }),
-  audience_segments: z.array(
-    z.object({
-      segment_name: z.string(),
-      description: z.string(),
-      age_range: z.string(),
-      interests: z.array(z.string()),
-      preferred_channels: z.array(z.string()),
-    })
-  ),
-  creatives: z.array(
-    z.object({
-      segment_name: z.string(),
-      ad_format: z.string(),
-      headline: z.string(),
-      primary_text: z.string(),
-      call_to_action: z.string(),
-      geo_context_hook: z.string(),
-    })
-  ),
-});
-export type GenerateAdCreativesOutput = z.infer<typeof GenerateAdCreativesOutputSchema>;
+export type GenerateAdCreativesInput = z.infer<typeof AdPlanInputSchema>;
+export type GenerateAdCreativesOutput = z.infer<typeof AdPlanOutputSchema>;
 
 export async function generateAdCreatives(input: GenerateAdCreativesInput): Promise<GenerateAdCreativesOutput> {
   return generateAdCreativesFlow(input);
@@ -83,8 +21,8 @@ export async function generateAdCreatives(input: GenerateAdCreativesInput): Prom
 
 const prompt = ai.definePrompt({
   name: 'generateAdCreativesPrompt',
-  input: {schema: GenerateAdCreativesInputSchema},
-  output: {schema: GenerateAdCreativesOutputSchema},
+  input: {schema: AdPlanInputSchema},
+  output: {schema: AdPlanOutputSchema},
   prompt: `You are an AI Geo-Contextual Ad Targeting Engine that outputs data for a web dashboard.
 
 Your goal:
@@ -101,8 +39,7 @@ RULES:
 - Respond with VALID JSON ONLY. No explanation text.
 
 OUTPUT SCHEMA:
-
-{{ zodSchema output }}
+{{- zodSchema output -}}
 
 NOW USE THIS USER INPUT:
 
@@ -128,8 +65,8 @@ TARGET_CUSTOMER_NOTES:
 const generateAdCreativesFlow = ai.defineFlow(
   {
     name: 'generateAdCreativesFlow',
-    inputSchema: GenerateAdCreativesInputSchema,
-    outputSchema: GenerateAdCreativesOutputSchema,
+    inputSchema: AdPlanInputSchema,
+    outputSchema: AdPlanOutputSchema,
   },
   async input => {
     const {output} = await prompt(input);
