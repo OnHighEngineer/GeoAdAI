@@ -24,11 +24,11 @@ export function AudienceSegments({ segments }: AudienceSegmentsProps) {
       <Accordion type="single" collapsible className="w-full" defaultValue="item-0">
         {segments.map((segment, index) => (
           <AccordionItem key={index} value={`item-${index}`}>
-            <AccordionTrigger className="font-semibold text-lg hover:no-underline rounded-md px-4 transition-colors hover:bg-muted/50">
+            <AccordionTrigger className="font-semibold text-lg hover:no-underline rounded-md px-4 transition-colors hover:bg-muted/50 text-left">
               {segment.segment_name}
             </AccordionTrigger>
             <AccordionContent className="space-y-4 pt-2 px-4">
-              <p className="text-muted-foreground">{segment.description}</p>
+              <p className="text-muted-foreground text-justify">{segment.description}</p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                 <div>
                   <h4 className="font-semibold mb-2">Details</h4>

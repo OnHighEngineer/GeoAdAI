@@ -50,7 +50,7 @@ export function GeoStrategySection({ geoStrategy }: GeoStrategySectionProps) {
               </span>
               <span className="text-muted-foreground">km radius</span>
             </div>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-muted-foreground text-justify">
               Recommended targeting radius around{' '}
               <strong>{geoStrategy.primary_area}</strong> in{' '}
               <strong>{geoStrategy.city}</strong>.
@@ -79,7 +79,7 @@ export function GeoStrategySection({ geoStrategy }: GeoStrategySectionProps) {
                     </Badge>
                     <span className="font-semibold flex-shrink-0">{region.name}</span>
                   </div>
-                  <p className="text-sm text-muted-foreground sm:border-l sm:pl-4">
+                  <p className="text-sm text-muted-foreground sm:border-l sm:pl-4 text-justify">
                     {region.reason}
                   </p>
                 </li>
@@ -106,7 +106,7 @@ export function GeoStrategySection({ geoStrategy }: GeoStrategySectionProps) {
                         {window.hours_local}
                       </span>
                   </div>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-muted-foreground text-justify">
                     {window.reason}
                   </p>
                 </div>

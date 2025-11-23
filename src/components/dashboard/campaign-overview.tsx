@@ -19,7 +19,7 @@ export function CampaignOverview({ overview }: CampaignOverviewProps) {
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          <p className="text-lg text-muted-foreground">{overview.summary}</p>
+          <p className="text-lg text-muted-foreground text-justify">{overview.summary}</p>
           <div className="flex items-center gap-3 text-base font-medium p-3 bg-muted/50 rounded-lg">
             <Target className="h-5 w-5 text-primary" />
             <span>
