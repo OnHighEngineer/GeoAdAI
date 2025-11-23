@@ -9,7 +9,10 @@ import { Loading } from '@/components/dashboard/loading';
 import { AdPlanDisplay } from '@/components/dashboard/ad-plan-display';
 import { generateAdPlanAction } from './actions';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Share2, Save, Rocket, ClipboardCheck, Trash2 } from 'lucide-react';
+import { 
+  ArrowLeft, Share2, Save, Rocket, ClipboardCheck, 
+  Trash2, Sparkles, Download, BarChart3 
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   AlertDialog,
@@ -22,6 +25,13 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 type AppState = 'welcome' | 'form' | 'loading' | 'results';
 
@@ -34,7 +44,6 @@ export default function Home() {
   const { toast } = useToast();
 
   useEffect(() => {
-    // On initial load, check if a plan is saved in local storage
     const savedPlanJson = localStorage.getItem(SAVED_PLAN_KEY);
     if (savedPlanJson) {
       try {
@@ -66,7 +75,7 @@ export default function Home() {
     if (result.success) {
       setAdPlan(result.data);
       setAppState('results');
-      setIsPlanSaved(false); // A new plan is not saved by default
+      setIsPlanSaved(false);
     } else {
       toast({
         variant: 'destructive',
@@ -94,7 +103,7 @@ export default function Home() {
       localStorage.setItem(SAVED_PLAN_KEY, JSON.stringify(adPlan));
       setIsPlanSaved(true);
       toast({
-        title: 'Plan Saved!',
+        title: '💾 Plan Saved!',
         description: 'Your ad plan has been saved to your browser.',
       });
     }
@@ -118,6 +127,12 @@ export default function Home() {
     });
   }
 
+  const handleDownloadReport = () => {
+    toast({
+      title: '📥 Downloading Report',
+      description: 'Your campaign report is being generated...',
+    });
+  }
 
   const renderContent = () => {
     switch (appState) {
@@ -135,76 +150,195 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <header className="p-4 border-b sticky top-0 bg-background/80 backdrop-blur-lg z-10 flex items-center justify-between h-16">
-        <div className="flex-1 flex justify-start">
-          {appState === 'results' && (
-            <Button variant="outline" onClick={handleBackToForm}>
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              New Plan
-            </Button>
-          )}
-        </div>
-        <div className="flex-1 flex justify-center">
-            <h1 className="text-xl font-semibold font-headline text-center">AdWiseAI</h1>
-        </div>
-        <div className="flex-1 flex justify-end items-center gap-2">
+    <div className="min-h-screen flex flex-col bg-[hsl(var(--dashboard-bg))]">
+      {/* Enhanced Header */}
+      <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="container flex h-16 items-center justify-between px-4">
+          {/* Left Section */}
+          <div className="flex items-center gap-4 flex-1">
             {appState === 'results' && (
-                <>
-                    <Button variant="outline" onClick={handleShare}><Share2 className="mr-2 h-4 w-4" /> Share</Button>
-                    {isPlanSaved ? (
-                         <Button variant="destructive" onClick={handleDelete}><Trash2 className="mr-2 h-4 w-4" /> Delete Plan</Button>
-                    ) : (
-                        <Button variant="outline" onClick={handleSave}><Save className="mr-2 h-4 w-4" /> Save</Button>
-                    )}
-                   
+              <Button 
+                variant="ghost" 
+                onClick={handleBackToForm}
+                className="gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                <span className="hidden sm:inline">New Plan</span>
+              </Button>
+            )}
+          </div>
+
+          {/* Center - Logo */}
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
+              <Sparkles className="w-5 h-5 text-white" />
+            </div>
+            <h1 className="text-xl font-bold text-gradient font-headline">
+              AdWiseAI
+            </h1>
+          </div>
+
+          {/* Right Section */}
+          <div className="flex items-center gap-2 flex-1 justify-end">
+            {appState === 'results' && (
+              <>
+                {/* Mobile Menu */}
+                <div className="md:hidden">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" size="icon">
+                        <BarChart3 className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-48">
+                      <DropdownMenuItem onClick={handleShare}>
+                        <Share2 className="mr-2 h-4 w-4" />
+                        Share Plan
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={handleDownloadReport}>
+                        <Download className="mr-2 h-4 w-4" />
+                        Download Report
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      {isPlanSaved ? (
+                        <DropdownMenuItem onClick={handleDelete} className="text-destructive">
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          Delete Plan
+                        </DropdownMenuItem>
+                      ) : (
+                        <DropdownMenuItem onClick={handleSave}>
+                          <Save className="mr-2 h-4 w-4" />
+                          Save Plan
+                        </DropdownMenuItem>
+                      )}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+
+                {/* Desktop Buttons */}
+                <div className="hidden md:flex items-center gap-2">
+                  <Button variant="ghost" onClick={handleShare} className="gap-2">
+                    <Share2 className="h-4 w-4" />
+                    Share
+                  </Button>
+                  
+                  <Button variant="ghost" onClick={handleDownloadReport} className="gap-2">
+                    <Download className="h-4 w-4" />
+                    Export
+                  </Button>
+
+                  {isPlanSaved ? (
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
-                        <Button><Rocket className="mr-2 h-4 w-4" /> Launch Campaign</Button>
+                        <Button variant="ghost" className="gap-2 text-destructive hover:text-destructive">
+                          <Trash2 className="h-4 w-4" />
+                          Delete
+                        </Button>
                       </AlertDialogTrigger>
                       <AlertDialogContent>
                         <AlertDialogHeader>
-                          <AlertDialogTitle>Are you ready to launch?</AlertDialogTitle>
+                          <AlertDialogTitle>Delete Saved Plan?</AlertDialogTitle>
                           <AlertDialogDescription>
-                            This will simulate launching your ad campaign. In a real-world application, this would trigger integration with an ad platform.
+                            This will permanently delete your saved ad plan from this browser.
+                            This action cannot be undone.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                           <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction onClick={handleLaunch}>
-                            Yes, Launch It!
+                          <AlertDialogAction 
+                            onClick={handleDelete} 
+                            className="bg-destructive hover:bg-destructive/90"
+                          >
+                            Yes, delete it
                           </AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>
                     </AlertDialog>
-                </>
+                  ) : (
+                    <Button variant="outline" onClick={handleSave} className="gap-2">
+                      <Save className="h-4 w-4" />
+                      Save
+                    </Button>
+                  )}
+
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button className="gap-2 btn-gradient">
+                        <Rocket className="h-4 w-4" />
+                        Launch
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle className="flex items-center gap-2">
+                          <Rocket className="h-5 w-5 text-primary" />
+                          Ready to Launch?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This will simulate launching your ad campaign. In a real-world application, 
+                          this would trigger integration with an ad platform.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleLaunch} className="bg-green-600 hover:bg-green-700">
+                          Yes, Launch It! 🚀
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </div>
+              </>
             )}
+          </div>
         </div>
       </header>
-      <main className="flex-grow container mx-auto p-4 md:p-8">
-        {renderContent()}
+
+      <main className="flex-grow container mx-auto p-4 md:p-8 max-w-7xl">
+        <div className="animate-fade-in">
+          {renderContent()}
+        </div>
       </main>
+
+      {/* Sticky Footer CTA */}
       {appState === 'results' && (
-        <footer className="sticky bottom-0 bg-background/80 backdrop-blur-lg p-4 border-t text-center">
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button size="lg"><Rocket className="mr-2 h-5 w-5"/>Launch Campaign & Go Live</Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
+        <footer className="sticky bottom-0 border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+          <div className="container p-4">
+            <div className="flex items-center justify-between gap-4 max-w-4xl mx-auto">
+              <div className="hidden sm:block">
+                <p className="font-semibold">Ready to go live?</p>
+                <p className="text-sm text-muted-foreground">
+                  Launch your campaign and start reaching your audience
+                </p>
+              </div>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button size="lg" className="gap-2 btn-gradient shadow-lg w-full sm:w-auto">
+                    <Rocket className="h-5 w-5" />
+                    Launch Campaign & Go Live
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Are you ready to launch?</AlertDialogTitle>
+                    <AlertDialogTitle className="flex items-center gap-2">
+                      <Rocket className="h-5 w-5 text-primary" />
+                      Ready to Launch?
+                    </AlertDialogTitle>
                     <AlertDialogDescription>
-                      This will simulate launching your ad campaign. In a real-world application, this would trigger integration with an ad platform.
+                      This will simulate launching your ad campaign. In a real-world application, 
+                      this would trigger integration with an ad platform.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleLaunch}>
-                      Yes, Launch It!
+                    <AlertDialogAction onClick={handleLaunch} className="bg-green-600 hover:bg-green-700">
+                      Yes, Launch It! 🚀
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
-            </AlertDialog>
+              </AlertDialog>
+            </div>
+          </div>
         </footer>
       )}
     </div>
