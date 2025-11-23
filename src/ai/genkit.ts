@@ -6,7 +6,12 @@ let aiInstance: ReturnType<typeof genkit> | null = null;
 export function getAI() {
   if (!aiInstance) {
     aiInstance = genkit({
-      plugins: [googleAI()],
+      plugins: [
+        googleAI({
+          // This explicitly tells Genkit to use the key from your .env file
+          apiKey: process.env.GOOGLE_GENAI_API_KEY,
+        }),
+      ],
       model: 'googleai/gemini-1.5-flash',
     });
   }
