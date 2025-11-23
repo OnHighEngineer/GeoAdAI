@@ -23,215 +23,202 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import type { GenerateAdPlanInput } from '@/ai/flows/generate-ad-plan';
 import { AdPlanInputSchema } from '@/ai/flows/schemas';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Button } from '../ui/button';
+import { Loader2, LocateFixed, Sparkles } from 'lucide-react';
+import { Slider } from '../ui/slider';
+import { useState } from 'react';
+import { Badge } from '../ui/badge';
 
 type AdPlanFormProps = {
   onSubmit: (values: GenerateAdPlanInput) => void;
   isPending: boolean;
 };
 
-// Getting the schema from the AI flow
 const FormSchema = AdPlanInputSchema;
 
 const defaultValues: Partial<GenerateAdPlanInput> = {
-  business_name: 'UrbanBloom Cafe',
-  business_description:
-    'A modern, cozy cafe in downtown offering artisanal coffee, pastries, and light lunches. We focus on locally sourced, organic ingredients.',
-  campaign_objective: 'Increase foot traffic during weekday mornings.',
-  country: 'USA',
-  city: 'San Francisco',
-  area: 'Financial District',
+  business_name: '',
+  business_description: 'Premium organic coffee beans sourced from Colombia...',
+  campaign_objective: 'Increase in-store visits',
+  country: '',
+  city: '',
+  area: '',
   urban_type: 'Urban',
   budget_level: 'medium',
-  preferred_channels: 'Mobile, In-app, Social Media',
-  target_customer_notes:
-    'Young professionals, 25-40, working in nearby offices. Tech-savvy, values quality and convenience. Active on Instagram and LinkedIn.',
+  preferred_channels: 'Mobile, Social Media',
+  target_customer_notes: '',
 };
 
+const interestsList = [
+  'Technology',
+  'Fashion',
+  'Sports',
+  'Travel',
+  'Food',
+  'Health',
+  'Gaming',
+  'Music',
+];
+
 export function AdPlanForm({ onSubmit, isPending }: AdPlanFormProps) {
+  const [budget, setBudget] = useState(1000);
+  const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
+  
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues,
   });
 
+  const handleFormSubmit = (values: z.infer<typeof FormSchema>) => {
+    const budgetLevel = budget < 500 ? 'low' : budget < 5000 ? 'medium' : 'high';
+    const finalValues = {
+        ...values,
+        budget_level: budgetLevel,
+        target_customer_notes: `${values.target_customer_notes} Interested in: ${selectedInterests.join(', ')}`
+    }
+    onSubmit(finalValues);
+  }
+
+  const toggleInterest = (interest: string) => {
+    setSelectedInterests(prev => 
+        prev.includes(interest) 
+        ? prev.filter(i => i !== interest)
+        : [...prev, interest]
+    )
+  }
+
   return (
     <Form {...form}>
       <form
-        id="ad-plan-form"
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-4"
+        onSubmit={form.handleSubmit(handleFormSubmit)}
+        className="space-y-8 max-w-4xl mx-auto"
       >
-        <fieldset disabled={isPending} className="space-y-4">
-          <FormField
-            control={form.control}
-            name="business_name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Business Name</FormLabel>
-                <FormControl>
-                  <Input placeholder="e.g., Joe's Pizza" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="business_description"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Business Description</FormLabel>
-                <FormControl>
-                  <Textarea
-                    placeholder="Describe your business in a few sentences."
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="campaign_objective"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Campaign Objective</FormLabel>
-                <FormControl>
-                  <Input placeholder="e.g., Increase online sales" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="country"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Country</FormLabel>
-                <FormControl>
-                  <Input placeholder="e.g., USA" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <div className="grid grid-cols-2 gap-4">
+        <Card>
+          <CardHeader>
+            <CardTitle>Target Location</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="country"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Country</FormLabel>
+                    <FormControl>
+                      <Input placeholder="e.g., USA" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="city"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>City</FormLabel>
+                    <FormControl>
+                      <Input placeholder="e.g., San Francisco" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+             <Button type="button" variant="outline" className="w-full">
+                <LocateFixed className="mr-2 h-4 w-4" />
+                Use My Location
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Campaign Details</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
             <FormField
               control={form.control}
-              name="city"
+              name="business_description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>City</FormLabel>
+                  <FormLabel>Product/Service Description</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., New York" {...field} />
+                    <Textarea
+                      placeholder="e.g., Premium organic coffee beans sourced from Colombia..."
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="area"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Area/Neighborhood</FormLabel>
-                  <FormControl>
-                    <Input placeholder="e.g., SoHo" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          <div className="grid grid-cols-2 gap-4">
+            <FormItem>
+                <FormLabel>Campaign Budget: ${budget.toLocaleString()}</FormLabel>
+                <FormControl>
+                    <Slider
+                        defaultValue={[budget]}
+                        onValueChange={(value) => setBudget(value[0])}
+                        min={100}
+                        max={10000}
+                        step={100}
+                    />
+                </FormControl>
+            </FormItem>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Target Audience</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
              <FormField
-              control={form.control}
-              name="urban_type"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Urban Type</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
+                control={form.control}
+                name="target_customer_notes"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Target Age Group</FormLabel>
                     <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a type" />
-                      </SelectTrigger>
+                      <Input placeholder="e.g., 18-24, 25-35" {...field} />
                     </FormControl>
-                    <SelectContent>
-                      <SelectItem value="Urban">Urban</SelectItem>
-                      <SelectItem value="Semi-Urban">Semi-Urban</SelectItem>
-                      <SelectItem value="Rural">Rural</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="budget_level"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Budget Level</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a budget" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="low">Low</SelectItem>
-                      <SelectItem value="medium">Medium</SelectItem>
-                      <SelectItem value="high">High</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          <FormField
-            control={form.control}
-            name="preferred_channels"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Preferred Channels</FormLabel>
+                     <FormDescription>Enter age ranges separated by commas.</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+               <FormItem>
+                <FormLabel>Target Interests ({selectedInterests.length} selected)</FormLabel>
                 <FormControl>
-                  <Input
-                    placeholder="e.g., Social Media, Search, CTV"
-                    {...field}
-                  />
+                   <div className="flex flex-wrap gap-2">
+                        {interestsList.map(interest => (
+                            <Badge 
+                                key={interest}
+                                variant={selectedInterests.includes(interest) ? 'default' : 'outline'}
+                                onClick={() => toggleInterest(interest)}
+                                className="cursor-pointer"
+                            >
+                                {interest}
+                            </Badge>
+                        ))}
+                   </div>
                 </FormControl>
-                <FormDescription>
-                  Separate channels with commas.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="target_customer_notes"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Target Customer Notes</FormLabel>
-                <FormControl>
-                  <Textarea
-                    placeholder="Describe your ideal customer."
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </fieldset>
+            </FormItem>
+          </CardContent>
+        </Card>
+        
+        <div className="flex justify-center">
+            <Button type="submit" size="lg" disabled={isPending}>
+                {isPending ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                    <Sparkles className="mr-2 h-4 w-4" />
+                )}
+                Generate AI Campaign
+            </Button>
+        </div>
       </form>
     </Form>
   );
