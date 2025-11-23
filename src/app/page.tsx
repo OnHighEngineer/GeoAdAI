@@ -9,7 +9,7 @@ import { Loading } from '@/components/dashboard/loading';
 import { AdPlanDisplay } from '@/components/dashboard/ad-plan-display';
 import { generateAdPlanAction } from './actions';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Share2, Save, Rocket } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 type AppState = 'welcome' | 'form' | 'loading' | 'results';
@@ -49,7 +49,7 @@ export default function Home() {
       case 'welcome':
         return <Welcome onStart={handleStart} />;
       case 'form':
-        return <AdPlanForm onSubmit={handleSubmit} isPending={false} />;
+        return <AdPlanForm onSubmit={handleSubmit} isPending={appState === 'loading'} />;
       case 'loading':
         return <Loading />;
       case 'results':
@@ -61,21 +61,36 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="p-4 border-b sticky top-0 bg-background/80 backdrop-blur-sm z-10 flex items-center justify-between h-16">
-        {appState === 'results' ? (
-          <Button variant="outline" onClick={handleBackToForm}>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Form
-          </Button>
-        ) : (
-          <div></div>
-        )}
-        <h1 className="text-xl font-semibold font-headline text-center">AdWiseAI</h1>
-		<div></div>
+      <header className="p-4 border-b sticky top-0 bg-background/80 backdrop-blur-lg z-10 flex items-center justify-between h-16">
+        <div className="flex-1 flex justify-start">
+          {appState === 'results' && (
+            <Button variant="outline" onClick={handleBackToForm}>
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              New Plan
+            </Button>
+          )}
+        </div>
+        <div className="flex-1 flex justify-center">
+            <h1 className="text-xl font-semibold font-headline text-center">AdWiseAI</h1>
+        </div>
+        <div className="flex-1 flex justify-end items-center gap-2">
+            {appState === 'results' && (
+                <>
+                    <Button variant="outline"><Share2 className="mr-2 h-4 w-4" /> Share</Button>
+                    <Button variant="outline"><Save className="mr-2 h-4 w-4" /> Save</Button>
+                    <Button><Rocket className="mr-2 h-4 w-4" /> Launch Campaign</Button>
+                </>
+            )}
+        </div>
       </header>
       <main className="flex-grow container mx-auto p-4 md:p-8">
         {renderContent()}
       </main>
+      {appState === 'results' && (
+        <footer className="sticky bottom-0 bg-background/80 backdrop-blur-lg p-4 border-t text-center">
+            <Button size="lg"><Rocket className="mr-2 h-5 w-5"/>Launch Campaign & Go Live</Button>
+        </footer>
+      )}
     </div>
   );
 }

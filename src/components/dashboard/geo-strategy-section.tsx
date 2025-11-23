@@ -7,7 +7,7 @@ import {
   CardTitle,
 } from '../ui/card';
 import { Badge } from '../ui/badge';
-import { Clock, MapPin, Maximize } from 'lucide-react';
+import { Clock, Compass, MapPin } from 'lucide-react';
 
 type GeoStrategySectionProps = {
   geoStrategy: AdPlan['geo_strategy'];
@@ -20,14 +20,24 @@ const priorityVariantMap: Record<string, 'default' | 'secondary' | 'outline'> =
     low: 'outline',
   };
 
+const priorityColorClass: Record<string, string> =
+  {
+    high: 'border-destructive/80 text-destructive',
+    medium: 'border-accent/80 text-accent-foreground',
+    low: 'border-muted-foreground/50 text-muted-foreground',
+  };
+
 export function GeoStrategySection({ geoStrategy }: GeoStrategySectionProps) {
   return (
-    <div>
-      <h2 className="text-2xl font-semibold tracking-tight mb-4 font-headline">
-        Geo-Strategy
-      </h2>
+    <section>
+      <div className="flex items-center gap-3 mb-4">
+        <Compass className="w-6 h-6 text-primary" />
+        <h2 className="text-2xl font-semibold tracking-tight font-headline">
+          Geo-Strategy
+        </h2>
+      </div>
       <div className="grid gap-6 md:grid-cols-3">
-        <Card className="md:col-span-1">
+        <Card className="md:col-span-1 glassmorphism">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <MapPin /> Location Focus
@@ -47,23 +57,23 @@ export function GeoStrategySection({ geoStrategy }: GeoStrategySectionProps) {
             </p>
           </CardContent>
         </Card>
-        <Card className="md:col-span-2">
+        <Card className="md:col-span-2 glassmorphism">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Maximize /> Target Regions
+               Target Regions
             </CardTitle>
             <CardDescription>
               Prioritized areas for ad placement.
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <ul className="space-y-4">
+            <ul className="space-y-3">
               {geoStrategy.target_regions.map((region, index) => (
-                <li key={index} className="flex flex-col sm:flex-row gap-2 sm:gap-4">
+                <li key={index} className="flex flex-col sm:flex-row gap-2 sm:gap-4 p-3 rounded-lg border transition-colors hover:bg-muted/50">
                   <div className="flex items-center gap-2">
                     <Badge
                       variant={priorityVariantMap[region.priority]}
-                      className="capitalize w-20 justify-center"
+                      className={`capitalize w-20 justify-center ${priorityColorClass[region.priority]}`}
                     >
                       {region.priority}
                     </Badge>
@@ -77,7 +87,7 @@ export function GeoStrategySection({ geoStrategy }: GeoStrategySectionProps) {
             </ul>
           </CardContent>
         </Card>
-        <Card className="md:col-span-3">
+        <Card className="md:col-span-3 glassmorphism">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Clock /> Time Windows
@@ -87,24 +97,24 @@ export function GeoStrategySection({ geoStrategy }: GeoStrategySectionProps) {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <ul className="space-y-4">
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {geoStrategy.time_windows.map((window, index) => (
-                <li key={index} className="flex flex-col sm:flex-row gap-2 sm:gap-4">
-                  <div className="flex items-center gap-2">
-                    <span className="font-semibold text-primary w-28 text-right flex-shrink-0">
-                      {window.hours_local}
-                    </span>
-                    <span className="font-semibold ">{window.label}</span>
+                <div key={index} className="p-4 rounded-lg bg-gradient-to-tr from-card to-muted/50 border transition-all hover:shadow-lg hover:-translate-y-0.5">
+                   <div className="flex items-center justify-between mb-2">
+                      <span className="font-semibold text-lg">{window.label}</span>
+                      <span className="font-semibold text-primary text-sm bg-primary/10 px-2 py-1 rounded-full">
+                        {window.hours_local}
+                      </span>
                   </div>
-                  <p className="text-sm text-muted-foreground sm:border-l sm:pl-4">
+                  <p className="text-sm text-muted-foreground">
                     {window.reason}
                   </p>
-                </li>
+                </div>
               ))}
-            </ul>
+            </div>
           </CardContent>
         </Card>
       </div>
-    </div>
+    </section>
   );
 }

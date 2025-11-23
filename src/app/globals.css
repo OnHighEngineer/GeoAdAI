@@ -96,3 +96,7 @@ body {
     opacity: .5;
   }
 }
+
+.glassmorphism {
+    @apply bg-card/60 backdrop-blur-lg border border-card/20;
+}
