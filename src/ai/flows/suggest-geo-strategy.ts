@@ -4,87 +4,22 @@
  * @fileOverview A geo-targeted ad plan generator.
  *
  * - suggestGeoStrategy - A function that handles the ad plan generation process.
- * - SuggestGeoStrategyInputSchema - The Zod schema for the input of the suggestGeoStrategy function.
- * - SuggestGeoStrategyInput - The input type for the suggestGeoStrategy function.
+ * - SuggestGeoStrategyInput - The input type for the suggestGeostrategy function.
  * - SuggestGeoStrategyOutput - The return type for the suggestGeoStrategy function.
  */
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { AdPlanInputSchema, AdPlanOutputSchema } from './schemas';
 
-export const SuggestGeoStrategyInputSchema = z.object({
-  business_name: z.string().describe('The name of the business.'),
-  business_description: z.string().describe('A description of the business.'),
-  campaign_objective: z.string().describe('The objective of the campaign.'),
-  country: z.string().describe('The country of the business.'),
-  city: z.string().describe('The city of the business.'),
-  area: z.string().describe('The area/neighborhood of the business.'),
-  urban_type: z.string().describe('The urban type of the business location.'),
-  budget_level: z.enum(['low', 'medium', 'high']).describe('The budget level for the campaign.'),
-  preferred_channels: z.string().describe('The preferred channels for advertising.'),
-  target_customer_notes: z.string().describe('Notes about the target customer.'),
-});
+export type SuggestGeoStrategyInput = z.infer<typeof AdPlanInputSchema>;
+export type SuggestGeoStrategyOutput = z.infer<typeof AdPlanOutputSchema>;
 
-export type SuggestGeoStrategyInput = z.infer<typeof SuggestGeoStrategyInputSchema>;
-
-const SuggestGeoStrategyOutputSchema = z.object({
-  kpis: z.object({
-    estimated_reach: z.number(),
-    estimated_ctr_percent: z.number(),
-    confidence_score_percent: z.number(),
-    budget_level: z.enum(['low', 'medium', 'high']),
-  }),
-  campaign_overview: z.object({
-    title: z.string(),
-    summary: z.string(),
-    primary_objective: z.string(),
-  }),
-  geo_strategy: z.object({
-    city: z.string(),
-    primary_area: z.string(),
-    recommended_radius_km: z.number(),
-    target_regions: z.array(
-      z.object({
-        name: z.string(),
-        priority: z.enum(['high', 'medium', 'low']),
-        reason: z.string(),
-      })
-    ),
-    time_windows: z.array(
-      z.object({
-        label: z.string(),
-        hours_local: z.string(),
-        reason: z.string(),
-      })
-    ),
-  }),
-  audience_segments: z.array(
-    z.object({
-      segment_name: z.string(),
-      description: z.string(),
-      age_range: z.string(),
-      interests: z.array(z.string()),
-      preferred_channels: z.array(z.string()),
-    })
-  ),
-  creatives: z.array(
-    z.object({
-      segment_name: z.string(),
-      ad_format: z.string(),
-      headline: z.string(),
-      primary_text: z.string(),
-      call_to_action: z.string(),
-      geo_context_hook: z.string(),
-    })
-  ),
-});
-
-export type SuggestGeoStrategyOutput = z.infer<typeof SuggestGeoStrategyOutputSchema>;
 
 const prompt = ai.definePrompt({
   name: 'suggestGeoStrategyPrompt',
-  input: {schema: SuggestGeoStrategyInputSchema},
-  output: {schema: SuggestGeoStrategyOutputSchema},
+  input: {schema: AdPlanInputSchema},
+  output: {schema: AdPlanOutputSchema},
   prompt: `You are an AI Geo-Contextual Ad Targeting Engine that outputs data for a web dashboard.
 
 Your goal:
@@ -129,8 +64,8 @@ TARGET_CUSTOMER_NOTES:
 const suggestGeoStrategyFlow = ai.defineFlow(
   {
     name: 'suggestGeoStrategyFlow',
-    inputSchema: SuggestGeoStrategyInputSchema,
-    outputSchema: SuggestGeoStrategyOutputSchema,
+    inputSchema: AdPlanInputSchema,
+    outputSchema: AdPlanOutputSchema,
   },
   async input => {
     const {output} = await prompt(input);

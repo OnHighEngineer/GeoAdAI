@@ -22,7 +22,7 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import type { SuggestGeoStrategyInput } from '@/ai/flows/suggest-geo-strategy';
-import { SuggestGeoStrategyInputSchema } from '@/ai/flows/suggest-geo-strategy';
+import { AdPlanInputSchema } from '@/ai/flows/schemas';
 
 type AdPlanFormProps = {
   onSubmit: (values: SuggestGeoStrategyInput) => void;
@@ -30,7 +30,7 @@ type AdPlanFormProps = {
 };
 
 // Getting the schema from the AI flow
-const FormSchema = SuggestGeoStrategyInputSchema;
+const FormSchema = AdPlanInputSchema;
 
 const defaultValues: Partial<SuggestGeoStrategyInput> = {
   business_name: 'UrbanBloom Cafe',
@@ -170,7 +170,7 @@ export function AdPlanForm({ onSubmit, isPending }: AdPlanFormProps) {
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select a budget level" />
+                        <SelectValue placeholder="Select a budget" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -191,8 +191,14 @@ export function AdPlanForm({ onSubmit, isPending }: AdPlanFormProps) {
               <FormItem>
                 <FormLabel>Preferred Channels</FormLabel>
                 <FormControl>
-                  <Input placeholder="e.g., Social Media, Search" {...field} />
+                  <Input
+                    placeholder="e.g., Social Media, Search, CTV"
+                    {...field}
+                  />
                 </FormControl>
+                <FormDescription>
+                  Separate channels with commas.
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -209,9 +215,6 @@ export function AdPlanForm({ onSubmit, isPending }: AdPlanFormProps) {
                     {...field}
                   />
                 </FormControl>
-                <FormDescription>
-                  Provide any details about your target audience.
-                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
