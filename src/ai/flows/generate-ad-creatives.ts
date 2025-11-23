@@ -102,57 +102,7 @@ RULES:
 
 OUTPUT SCHEMA:
 
-{
-  "kpis": {
-    "estimated_reach": number,
-    "estimated_ctr_percent": number,
-    "confidence_score_percent": number,
-    "budget_level": "low" | "medium" | "high"
-  },
-  "campaign_overview": {
-    "title": "short campaign title",
-    "summary": "2–3 line explanation of the strategy",
-    "primary_objective": "string"
-  },
-  "geo_strategy": {
-    "city": "string",
-    "primary_area": "string",
-    "recommended_radius_km": number,
-    "target_regions": [
-      {
-        "name": "area or neighborhood",
-        "priority": "high" | "medium" | "low",
-        "reason": "why this is a good area"
-      }
-    ],
-    "time_windows": [
-      {
-        "label": "e.g., Office commute",
-        "hours_local": "e.g., 7:00–10:00",
-        "reason": "why this time is ideal"
-      }
-    ]
-  },
-  "audience_segments": [
-    {
-      "segment_name": "string",
-      "description": "who they are and what they care about (no sensitive traits)",
-      "age_range": "e.g., 22–35",
-      "interests": ["list", "of", "interests"],
-      "preferred_channels": ["Mobile", "In-app", "Display", "Search", "CTV"]
-    }
-  ],
-  "creatives": [
-    {
-      "segment_name": "must match one of audience_segments.segment_name",
-      "ad_format": "e.g., Mobile banner / Video / Native",
-      "headline": "max 60 characters",
-      "primary_text": "1–2 short lines",
-      "call_to_action": "e.g., 'Order Now'",
-      "geo_context_hook": "line referencing the local city/area or time of day"
-    }
-  ]
-}
+{{ zodSchema output }}
 
 NOW USE THIS USER INPUT:
 
