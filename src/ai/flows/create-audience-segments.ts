@@ -57,6 +57,7 @@ Given a user's business + location + objective, generate audience segments.
 RULES:
 - DO NOT use or infer sensitive traits (religion, caste, race, health, sexual orientation, political views).
 - Use only location, generic demographics, interests, device type, and time behavior.
+- Respond with a valid JSON array matching the output schema.
 
 BUSINESS_NAME: {{{business_name}}}
 BUSINESS_DESCRIPTION: {{{business_description}}}
@@ -75,8 +76,6 @@ PREFERRED_CHANNELS: {{{preferred_channels}}}
 
 TARGET_CUSTOMER_NOTES:
 {{{target_customer_notes}}}
-
-Generate a list of audience segments in JSON format:
 `,
 });
 

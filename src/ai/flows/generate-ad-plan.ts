@@ -38,10 +38,7 @@ The output MUST be structured so that a frontend dashboard can render:
 RULES:
 - DO NOT use or infer sensitive traits (religion, caste, race, health, sexual orientation, political views).
 - Use only location, generic demographics, interests, device type, and time behavior.
-- Respond with VALID JSON ONLY. No explanation text.
-
-OUTPUT SCHEMA:
-{{- zodSchema output -}}
+- Respond with a valid JSON object matching the output schema.
 
 NOW USE THIS USER INPUT:
 
