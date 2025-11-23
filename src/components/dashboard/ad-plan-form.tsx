@@ -29,6 +29,7 @@ import { Loader2, LocateFixed, Sparkles } from 'lucide-react';
 import { Slider } from '../ui/slider';
 import { useState } from 'react';
 import { Badge } from '../ui/badge';
+import { useToast } from '@/hooks/use-toast';
 
 type AdPlanFormProps = {
   onSubmit: (values: GenerateAdPlanInput) => void;
@@ -64,6 +65,8 @@ const interestsList = [
 export function AdPlanForm({ onSubmit, isPending }: AdPlanFormProps) {
   const [budget, setBudget] = useState(1000);
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
+  const [isLocating, setIsLocating] = useState(false);
+  const { toast } = useToast();
   
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -87,6 +90,60 @@ export function AdPlanForm({ onSubmit, isPending }: AdPlanFormProps) {
         : [...prev, interest]
     )
   }
+
+  const handleUseMyLocation = () => {
+    if (!navigator.geolocation) {
+      toast({
+        variant: 'destructive',
+        title: 'Geolocation is not supported by your browser.',
+      });
+      return;
+    }
+
+    setIsLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+        try {
+          // Using a free, no-API-key-required reverse geocoding service
+          const response = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
+          );
+          if (!response.ok) {
+            throw new Error('Failed to fetch location data.');
+          }
+          const data = await response.json();
+          const { country, city } = data.address;
+          if (country) {
+            form.setValue('country', country, { shouldValidate: true });
+          }
+          if (city) {
+            form.setValue('city', city, { shouldValidate: true });
+          }
+          toast({
+            title: 'Location set!',
+            description: `City set to ${city}, Country set to ${country}.`,
+          });
+        } catch (error) {
+          toast({
+            variant: 'destructive',
+            title: 'Could not determine location.',
+            description: 'Please enter your city and country manually.',
+          });
+        } finally {
+          setIsLocating(false);
+        }
+      },
+      () => {
+        toast({
+          variant: 'destructive',
+          title: 'Unable to retrieve your location.',
+          description: 'Please ensure location services are enabled in your browser and try again.',
+        });
+        setIsLocating(false);
+      }
+    );
+  };
 
   return (
     <Form {...form}>
@@ -127,9 +184,9 @@ export function AdPlanForm({ onSubmit, isPending }: AdPlanFormProps) {
                 )}
               />
             </div>
-             <Button type="button" variant="outline" className="w-full">
-                <LocateFixed className="mr-2 h-4 w-4" />
-                Use My Location
+             <Button type="button" variant="outline" className="w-full" onClick={handleUseMyLocation} disabled={isLocating}>
+                {isLocating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <LocateFixed className="mr-2 h-4 w-4" />}
+                {isLocating ? 'Getting Location...' : 'Use My Location'}
             </Button>
           </CardContent>
         </Card>
