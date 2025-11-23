@@ -11,7 +11,7 @@ import { generateAdPlanAction } from './actions';
 import { useToast } from '@/hooks/use-toast';
 import { 
   ArrowLeft, Share2, Save, Rocket, ClipboardCheck, 
-  Trash2, Sparkles, BarChart3 
+  Trash2, Sparkles, Download, BarChart3 
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -32,7 +32,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-
 
 type AppState = 'welcome' | 'form' | 'loading' | 'results';
 
@@ -129,11 +128,11 @@ export default function Home() {
   }
 
   const handleDownloadReport = () => {
-    toast({
+     toast({
       title: '📥 Downloading Report',
       description: 'Your campaign report is being generated...',
     });
-  }
+  };
 
   const renderContent = () => {
     switch (appState) {
@@ -196,6 +195,10 @@ export default function Home() {
                         <Share2 className="mr-2 h-4 w-4" />
                         Share Plan
                       </DropdownMenuItem>
+                      <DropdownMenuItem onClick={handleDownloadReport}>
+                        <Download className="mr-2 h-4 w-4" />
+                        Download Report
+                      </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       {isPlanSaved ? (
                         <DropdownMenuItem onClick={handleDelete} className="text-destructive">
@@ -219,6 +222,11 @@ export default function Home() {
                     Share
                   </Button>
                   
+                  <Button variant="ghost" onClick={handleDownloadReport} className="gap-2">
+                    <Download className="h-4 w-4" />
+                    Export
+                  </Button>
+
                   {isPlanSaved ? (
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
@@ -287,7 +295,7 @@ export default function Home() {
       </header>
 
       <main className="flex-grow container mx-auto p-4 md:p-8 max-w-7xl">
-        <div className="animate-fade-in">
+        <div className="animate-fade-in" id="ad-plan-content">
           {renderContent()}
         </div>
       </main>
