@@ -19,13 +19,14 @@ import Logo from '../icons/logo';
 import { AdPlanDisplay } from './ad-plan-display';
 import { Welcome } from './welcome';
 import { Loading } from './loading';
+import { SuggestGeoStrategyInput } from '@/ai/flows/suggest-geo-strategy';
 
 export default function DashboardClient() {
   const [adPlan, setAdPlan] = useState<AdPlan | null>(null);
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
 
-  const handleSubmit = (values: AdPlan['kpis']) => {
+  const handleSubmit = (values: SuggestGeoStrategyInput) => {
     startTransition(async () => {
       setAdPlan(null);
       const result = await generateAdPlanAction(values);
@@ -54,7 +55,7 @@ export default function DashboardClient() {
         </SidebarHeader>
         <SidebarContent className="p-0">
           <div className="p-4">
-            <AdPlanForm onSubmit={handleSubmit} />
+            <AdPlanForm onSubmit={handleSubmit} isPending={isPending} />
           </div>
         </SidebarContent>
         <SidebarFooter>
@@ -63,16 +64,8 @@ export default function DashboardClient() {
             type="submit"
             className="w-full"
             disabled={isPending}
-            onClick={() => {
-              // This is a trick to trigger form submission from an external button
-              document.getElementById('hidden-submit-button')?.click();
-            }}
           >
-            {isPending ? (
-              <Loader2 className="animate-spin" />
-            ) : (
-              <Wand2 />
-            )}
+            {isPending ? <Loader2 className="animate-spin" /> : <Wand2 />}
             Generate Plan
           </Button>
         </SidebarFooter>

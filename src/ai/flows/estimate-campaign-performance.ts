@@ -4,6 +4,7 @@
  * @fileOverview An AI Geo-Contextual Ad Targeting Engine that outputs data for a web dashboard.
  *
  * - estimateCampaignPerformance - A function that handles the ad campaign estimation process.
+ * - EstimateCampaignPerformanceInputSchema - The Zod schema for the input of the estimateCampaignPerformance function.
  * - EstimateCampaignPerformanceInput - The input type for the estimateCampaignPerformance function.
  * - EstimateCampaignPerformanceOutput - The return type for the estimateCampaignPerformance function.
  */
@@ -11,7 +12,7 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
-const EstimateCampaignPerformanceInputSchema = z.object({
+export const EstimateCampaignPerformanceInputSchema = z.object({
   business_name: z.string().describe('The name of the business.'),
   business_description: z.string().describe('A description of the business.'),
   campaign_objective: z.string().describe('The objective of the campaign.'),
@@ -100,12 +101,6 @@ export type EstimateCampaignPerformanceOutput = z.infer<
   typeof EstimateCampaignPerformanceOutputSchema
 >;
 
-export async function estimateCampaignPerformance(
-  input: EstimateCampaignPerformanceInput
-): Promise<EstimateCampaignPerformanceOutput> {
-  return estimateCampaignPerformanceFlow(input);
-}
-
 const prompt = ai.definePrompt({
   name: 'estimateCampaignPerformancePrompt',
   input: {schema: EstimateCampaignPerformanceInputSchema},
@@ -128,3 +123,9 @@ const estimateCampaignPerformanceFlow = ai.defineFlow(
     return output!;
   }
 );
+
+export async function estimateCampaignPerformance(
+  input: EstimateCampaignPerformanceInput
+): Promise<EstimateCampaignPerformanceOutput> {
+  return estimateCampaignPerformanceFlow(input);
+}

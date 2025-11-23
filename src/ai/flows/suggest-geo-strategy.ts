@@ -4,6 +4,7 @@
  * @fileOverview A geo-targeted ad plan generator.
  *
  * - suggestGeoStrategy - A function that handles the ad plan generation process.
+ * - SuggestGeoStrategyInputSchema - The Zod schema for the input of the suggestGeoStrategy function.
  * - SuggestGeoStrategyInput - The input type for the suggestGeoStrategy function.
  * - SuggestGeoStrategyOutput - The return type for the suggestGeoStrategy function.
  */
@@ -11,7 +12,7 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
-const SuggestGeoStrategyInputSchema = z.object({
+export const SuggestGeoStrategyInputSchema = z.object({
   business_name: z.string().describe('The name of the business.'),
   business_description: z.string().describe('A description of the business.'),
   campaign_objective: z.string().describe('The objective of the campaign.'),
@@ -80,10 +81,6 @@ const SuggestGeoStrategyOutputSchema = z.object({
 
 export type SuggestGeoStrategyOutput = z.infer<typeof SuggestGeoStrategyOutputSchema>;
 
-export async function suggestGeoStrategy(input: SuggestGeoStrategyInput): Promise<SuggestGeoStrategyOutput> {
-  return suggestGeoStrategyFlow(input);
-}
-
 const prompt = ai.definePrompt({
   name: 'suggestGeoStrategyPrompt',
   input: {schema: SuggestGeoStrategyInputSchema},
@@ -140,3 +137,9 @@ const suggestGeoStrategyFlow = ai.defineFlow(
     return output!;
   }
 );
+
+export async function suggestGeoStrategy(
+  input: SuggestGeoStrategyInput
+): Promise<SuggestGeoStrategyOutput> {
+  return suggestGeoStrategyFlow(input);
+}
