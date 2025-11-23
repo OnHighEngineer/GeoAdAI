@@ -3,21 +3,36 @@
  * It uses a lazy-loading pattern to ensure the AI client is only initialized
  * when first accessed, improving server startup performance.
  */
-import {genkit} from 'genkit';
-import {googleAI} from '@genkit-ai/googleai';
+import { genkit } from 'genkit';
+import { googleAI } from '@genkit-ai/googleai';
 
 let aiInstance: ReturnType<typeof genkit> | null = null;
 
 function getAI() {
   if (!aiInstance) {
+    const isProduction = process.env.NODE_ENV === 'production';
+    
+    // Only log in development
+    if (!isProduction) {
+      console.log('[Genkit] Initializing AI instance...');
+    }
+    
     aiInstance = genkit({
       plugins: [
         googleAI({
           apiKey: process.env.GOOGLE_GENAI_API_KEY,
         }),
       ],
-      model: 'googleai/gemini-1.5-flash', // Correct model name with prefix
+      // ✅ MUST include 'googleai/' prefix
+      model: 'googleai/gemini-2.5-pro',
+      
+      // Disable dev features in production for faster startup
+      enableTracingAndMetrics: !isProduction,
     });
+    
+    if (!isProduction) {
+      console.log('[Genkit] AI instance ready with model: googleai/gemini-1.5-flash');
+    }
   }
   return aiInstance;
 }
