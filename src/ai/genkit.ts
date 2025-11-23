@@ -16,7 +16,7 @@ function getAI() {
           apiKey: process.env.GOOGLE_GENAI_API_KEY,
         }),
       ],
-      model: 'gemini-1.5-flash-latest', // Switched to a stable and widely available model
+      model: 'googleai/gemini-1.5-flash', // Correct model name with prefix
     });
   }
   return aiInstance;
