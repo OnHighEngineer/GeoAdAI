@@ -11,7 +11,7 @@ import { generateAdPlanAction } from './actions';
 import { useToast } from '@/hooks/use-toast';
 import { 
   ArrowLeft, Share2, Save, Rocket, ClipboardCheck, 
-  Trash2, Sparkles, Download, BarChart3 
+  Trash2, Sparkles, Download, BarChart3, Loader2 
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -32,6 +32,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
+
 
 type AppState = 'welcome' | 'form' | 'loading' | 'results';
 
@@ -41,6 +44,7 @@ export default function Home() {
   const [appState, setAppState] = useState<AppState>('welcome');
   const [adPlan, setAdPlan] = useState<AdPlan | null>(null);
   const [isPlanSaved, setIsPlanSaved] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -127,11 +131,59 @@ export default function Home() {
     });
   }
 
-  const handleDownloadReport = () => {
+  const handleDownloadReport = async () => {
+    const reportElement = document.getElementById('ad-plan-report');
+    if (!reportElement || !adPlan) {
+      toast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Could not find the report content to download.',
+      });
+      return;
+    }
+
+    setIsDownloading(true);
     toast({
-      title: '📥 Downloading Report',
+      title: '📥 Preparing Report',
       description: 'Your campaign report is being generated...',
     });
+
+    try {
+      const canvas = await html2canvas(reportElement, {
+        scale: 2, // Higher scale for better quality
+        useCORS: true,
+        logging: false,
+        backgroundColor: null, // Use element's background
+      });
+
+      const imgData = canvas.toDataURL('image/png');
+      
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'px',
+        format: [canvas.width, canvas.height],
+      });
+      
+      pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+
+      const fileName = `${adPlan.campaign_overview.title.replace(/\s+/g, '-')}-Report.pdf`;
+      pdf.save(fileName);
+
+      toast({
+        title: '✅ Report Downloaded',
+        description: `Saved as ${fileName}`,
+      });
+
+    } catch(error) {
+      console.error("PDF generation error:", error);
+      toast({
+        variant: 'destructive',
+        title: 'Download Failed',
+        description: 'An error occurred while generating the PDF.',
+      });
+    } finally {
+      setIsDownloading(false);
+    }
   }
 
   const renderContent = () => {
@@ -195,8 +247,12 @@ export default function Home() {
                         <Share2 className="mr-2 h-4 w-4" />
                         Share Plan
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={handleDownloadReport}>
-                        <Download className="mr-2 h-4 w-4" />
+                      <DropdownMenuItem onClick={handleDownloadReport} disabled={isDownloading}>
+                        {isDownloading ? (
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        ) : (
+                          <Download className="mr-2 h-4 w-4" />
+                        )}
                         Download Report
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
@@ -222,8 +278,12 @@ export default function Home() {
                     Share
                   </Button>
                   
-                  <Button variant="ghost" onClick={handleDownloadReport} className="gap-2">
-                    <Download className="h-4 w-4" />
+                  <Button variant="ghost" onClick={handleDownloadReport} className="gap-2" disabled={isDownloading}>
+                    {isDownloading ? (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    ) : (
+                      <Download className="mr-2 h-4 w-4" />
+                    )}
                     Export
                   </Button>
 
@@ -295,7 +355,7 @@ export default function Home() {
       </header>
 
       <main className="flex-grow container mx-auto p-4 md:p-8 max-w-7xl">
-        <div className="animate-fade-in">
+        <div className="animate-fade-in" id="ad-plan-report">
           {renderContent()}
         </div>
       </main>
