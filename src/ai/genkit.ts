@@ -4,15 +4,10 @@
  * when first accessed, improving server startup performance.
  */
 import {genkit} from 'genkit';
-import {googleAI} from '@genkit-ai/google-genai';
+import {googleAI} from '@genkit-ai/googleai';
 
 let aiInstance: ReturnType<typeof genkit> | null = null;
 
-/**
- * Gets the singleton AI instance, initializing it if necessary.
- * This lazy initialization prevents Genkit from loading during server startup.
- * @returns {ReturnType<typeof genkit>} The configured Genkit AI instance.
- */
 function getAI() {
   if (!aiInstance) {
     aiInstance = genkit({
