@@ -15,7 +15,7 @@ type AdPlanDisplayProps = {
 
 export function AdPlanDisplay({ adPlan }: AdPlanDisplayProps) {
   return (
-    <div className="space-y-8 pb-8 bg-dashboard-bg" id="ad-plan-report">
+    <div className="space-y-8 pb-8 bg-dashboard-bg">
       {/* Hero Banner */}
       <div className="relative overflow-hidden rounded-2xl bg-gradient-animated p-8 text-white">
         <div className="absolute inset-0 bg-black/20" />

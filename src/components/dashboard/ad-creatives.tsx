@@ -21,7 +21,6 @@ import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { 
   GalleryHorizontal, 
   Eye, 
-  Download, 
   Copy,
   Sparkles,
   ArrowRight
@@ -156,21 +155,6 @@ export function AdCreatives({ creatives }: AdCreativesProps) {
         </div>
       </Carousel>
 
-      {/* Download All CTA */}
-      <Card className="mt-6 p-4 bg-muted/30">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="font-semibold">Export All Creatives</p>
-            <p className="text-sm text-muted-foreground">
-              Download all ad variations in high resolution
-            </p>
-          </div>
-          <Button variant="outline" className="gap-2">
-            <Download className="w-4 h-4" />
-            Download Package
-          </Button>
-        </div>
-      </Card>
     </section>
   );
 }
