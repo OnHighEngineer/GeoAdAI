@@ -9,7 +9,7 @@ import { Loading } from '@/components/dashboard/loading';
 import { AdPlanDisplay } from '@/components/dashboard/ad-plan-display';
 import { generateAdPlanAction } from './actions';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Share2, Save, Rocket } from 'lucide-react';
+import { ArrowLeft, Share2, Save, Rocket, ClipboardCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 type AppState = 'welcome' | 'form' | 'loading' | 'results';
@@ -42,6 +42,25 @@ export default function Home() {
       });
       setAppState('form');
     }
+  };
+  
+  const handleShare = () => {
+    navigator.clipboard.writeText(window.location.href);
+    toast({
+      description: (
+        <div className="flex items-center gap-2">
+          <ClipboardCheck className="h-5 w-5 text-green-500" />
+          <span>Link copied to clipboard!</span>
+        </div>
+      ),
+    });
+  };
+
+  const handleComingSoon = (feature: string) => {
+    toast({
+      title: 'Coming Soon!',
+      description: `${feature} functionality is not yet implemented.`,
+    });
   };
 
   const renderContent = () => {
@@ -76,9 +95,9 @@ export default function Home() {
         <div className="flex-1 flex justify-end items-center gap-2">
             {appState === 'results' && (
                 <>
-                    <Button variant="outline"><Share2 className="mr-2 h-4 w-4" /> Share</Button>
-                    <Button variant="outline"><Save className="mr-2 h-4 w-4" /> Save</Button>
-                    <Button><Rocket className="mr-2 h-4 w-4" /> Launch Campaign</Button>
+                    <Button variant="outline" onClick={handleShare}><Share2 className="mr-2 h-4 w-4" /> Share</Button>
+                    <Button variant="outline" onClick={() => handleComingSoon('Save')}><Save className="mr-2 h-4 w-4" /> Save</Button>
+                    <Button onClick={() => handleComingSoon('Launch Campaign')}><Rocket className="mr-2 h-4 w-4" /> Launch Campaign</Button>
                 </>
             )}
         </div>
@@ -88,7 +107,7 @@ export default function Home() {
       </main>
       {appState === 'results' && (
         <footer className="sticky bottom-0 bg-background/80 backdrop-blur-lg p-4 border-t text-center">
-            <Button size="lg"><Rocket className="mr-2 h-5 w-5"/>Launch Campaign & Go Live</Button>
+            <Button size="lg" onClick={() => handleComingSoon('Launch Campaign')}><Rocket className="mr-2 h-5 w-5"/>Launch Campaign & Go Live</Button>
         </footer>
       )}
     </div>
