@@ -23,6 +23,18 @@
       "description": "A modern office space with people working.",
       "imageUrl": "https://images.unsplash.com/photo-1560264280-88b68371db39?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxvZmZpY2UlMjB3b3JrfGVufDB8fHx8MTc2Mzg1MDM4NHww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "office work"
+    },
+    {
+      "id": "ad-creative-5",
+      "description": "A stylish person shopping for clothes in a boutique.",
+      "imageUrl": "https://images.unsplash.com/photo-1445205170230-053b83016050?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxmYXNoaW9uJTIwc2hvcHBpbmd8ZW58MHx8fHwxNzY1MTE5MDY3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "fashion shopping"
+    },
+    {
+      "id": "ad-creative-6",
+      "description": "A family enjoying a day at a sunny park.",
+      "imageUrl": "https://images.unsplash.com/photo-1559132233-9979738f6579?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxmYW1pbHklMjBwYXJrfGVufDB8fHx8MTc2NTExOTEyNnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "family park"
     }
   ]
 }

@@ -33,7 +33,7 @@ The output MUST be structured so that a frontend dashboard can render:
 - KPI cards
 - Geo strategy section
 - Audience segments list
-- Creatives list
+- A list of exactly 3 ad creatives.
 
 RULES:
 - DO NOT use or infer sensitive traits (religion, caste, race, health, sexual orientation, political views).
