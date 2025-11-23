@@ -1,3 +1,28 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "ad-creative-1",
+      "description": "A person using a smartphone on a busy city street.",
+      "imageUrl": "https://images.unsplash.com/photo-1672591612959-1f3a2892e282?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxjaXR5JTIwcGhvbmV8ZW58MHx8fHwxNzYzOTA3MTY2fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "city phone"
+    },
+    {
+      "id": "ad-creative-2",
+      "description": "A close-up of a delicious-looking meal in a restaurant.",
+      "imageUrl": "https://images.unsplash.com/photo-1550367363-ea12860cc124?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxyZXN0YXVyYW50JTIwZm9vZHxlbnwwfHx8fDE3NjM5MDcxNjd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "restaurant food"
+    },
+    {
+      "id": "ad-creative-3",
+      "description": "A group of friends laughing and enjoying coffee at a cafe.",
+      "imageUrl": "https://images.unsplash.com/photo-1653762379443-b2c7f1f7c627?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxmcmllbmRzJTIwY2FmZXxlbnwwfHx8fDE3NjM4MzUwNDJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "friends cafe"
+    },
+    {
+      "id": "ad-creative-4",
+      "description": "A modern office space with people working.",
+      "imageUrl": "https://images.unsplash.com/photo-1560264280-88b68371db39?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxvZmZpY2UlMjB3b3JrfGVufDB8fHx8MTc2Mzg1MDM4NHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "office work"
+    }
+  ]
 }
