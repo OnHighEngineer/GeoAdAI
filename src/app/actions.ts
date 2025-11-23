@@ -1,13 +1,13 @@
 'use server';
 
 import {
-  suggestGeoStrategy,
-  type SuggestGeoStrategyInput,
-} from '@/ai/flows/suggest-geo-strategy';
+  generateAdPlan,
+  type GenerateAdPlanInput,
+} from '@/ai/flows/generate-ad-plan';
 
-export async function generateAdPlanAction(input: SuggestGeoStrategyInput) {
+export async function generateAdPlanAction(input: GenerateAdPlanInput) {
   try {
-    const adPlan = await suggestGeoStrategy(input);
+    const adPlan = await generateAdPlan(input);
     if (!adPlan) {
       throw new Error(
         'Failed to generate ad plan. The AI model returned no output.'

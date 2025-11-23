@@ -2,33 +2,34 @@
 
 import { generateAdPlanAction } from '@/app/actions';
 import type { AdPlan } from '@/lib/types';
-import { Loader2, Wand2 } from 'lucide-react';
 import React, { useState, useTransition } from 'react';
-import { Button } from '../ui/button';
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarHeader,
   SidebarInset,
   SidebarTrigger,
 } from '../ui/sidebar';
 import { useToast } from '@/hooks/use-toast';
-import { AdPlanForm } from './ad-plan-form';
 import Logo from '../icons/logo';
 import { AdPlanDisplay } from './ad-plan-display';
 import { Welcome } from './welcome';
 import { Loading } from './loading';
-import { SuggestGeoStrategyInput } from '@/ai/flows/suggest-geo-strategy';
+import type { GenerateAdPlanInput } from '@/ai/flows/generate-ad-plan';
+import { ChatInterface } from './chat-interface';
+import { Button } from '../ui/button';
+import { Pencil } from 'lucide-react';
 
 export default function DashboardClient() {
   const [adPlan, setAdPlan] = useState<AdPlan | null>(null);
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
+  const [showChat, setShowChat] = useState(true);
 
-  const handleSubmit = (values: SuggestGeoStrategyInput) => {
+  const handleSubmit = (values: GenerateAdPlanInput) => {
     startTransition(async () => {
       setAdPlan(null);
+      setShowChat(false);
       const result = await generateAdPlanAction(values);
       if (result.success) {
         setAdPlan(result.data);
@@ -38,8 +39,14 @@ export default function DashboardClient() {
           title: 'Error Generating Plan',
           description: result.error,
         });
+        setShowChat(true); // Re-show chat on error
       }
     });
+  };
+
+  const handleEdit = () => {
+    setAdPlan(null);
+    setShowChat(true);
   };
 
   return (
@@ -55,31 +62,32 @@ export default function DashboardClient() {
         </SidebarHeader>
         <SidebarContent className="p-0">
           <div className="p-4">
-            <AdPlanForm onSubmit={handleSubmit} isPending={isPending} />
+            <p className="text-sm text-muted-foreground">
+              Let's gather some information to create your advertising plan.
+            </p>
           </div>
         </SidebarContent>
-        <SidebarFooter>
-          <Button
-            form="ad-plan-form"
-            type="submit"
-            className="w-full"
-            disabled={isPending}
-          >
-            {isPending ? <Loader2 className="animate-spin" /> : <Wand2 />}
-            Generate Plan
-          </Button>
-        </SidebarFooter>
       </Sidebar>
       <SidebarInset>
         <header className="flex items-center justify-between p-4 border-b">
           <SidebarTrigger />
           <h2 className="text-lg font-semibold">
-            Generated Advertising Plan
+            {adPlan ? 'Generated Advertising Plan' : 'Ad Targeting Simulator'}
           </h2>
-          <div></div>
+          {adPlan ? (
+            <Button variant="outline" size="sm" onClick={handleEdit}>
+              <Pencil className="mr-2 h-4 w-4" />
+              Edit
+            </Button>
+          ) : (
+            <div></div>
+          )}
         </header>
         <main className="p-4 md:p-6">
-          {!isPending && !adPlan && <Welcome />}
+          {!adPlan && !isPending && showChat && (
+            <ChatInterface onSubmit={handleSubmit} isPending={isPending} />
+          )}
+          {!isPending && !adPlan && !showChat && <Welcome />}
           {isPending && <Loading />}
           {!isPending && adPlan && <AdPlanDisplay adPlan={adPlan} />}
         </main>

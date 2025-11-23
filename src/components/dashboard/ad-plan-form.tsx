@@ -21,18 +21,18 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import type { SuggestGeoStrategyInput } from '@/ai/flows/suggest-geo-strategy';
+import type { GenerateAdPlanInput } from '@/ai/flows/generate-ad-plan';
 import { AdPlanInputSchema } from '@/ai/flows/schemas';
 
 type AdPlanFormProps = {
-  onSubmit: (values: SuggestGeoStrategyInput) => void;
+  onSubmit: (values: GenerateAdPlanInput) => void;
   isPending: boolean;
 };
 
 // Getting the schema from the AI flow
 const FormSchema = AdPlanInputSchema;
 
-const defaultValues: Partial<SuggestGeoStrategyInput> = {
+const defaultValues: Partial<GenerateAdPlanInput> = {
   business_name: 'UrbanBloom Cafe',
   business_description:
     'A modern, cozy cafe in downtown offering artisanal coffee, pastries, and light lunches. We focus on locally sourced, organic ingredients.',
@@ -40,7 +40,7 @@ const defaultValues: Partial<SuggestGeoStrategyInput> = {
   country: 'USA',
   city: 'San Francisco',
   area: 'Financial District',
-  urban_type: 'urban',
+  urban_type: 'Urban',
   budget_level: 'medium',
   preferred_channels: 'Mobile, In-app, Social Media',
   target_customer_notes:
@@ -145,15 +145,27 @@ export function AdPlanForm({ onSubmit, isPending }: AdPlanFormProps) {
             />
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <FormField
+             <FormField
               control={form.control}
               name="urban_type"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Urban Type</FormLabel>
-                  <FormControl>
-                    <Input placeholder="e.g., urban, suburban" {...field} />
-                  </FormControl>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="Urban">Urban</SelectItem>
+                      <SelectItem value="Semi-Urban">Semi-Urban</SelectItem>
+                      <SelectItem value="Rural">Rural</SelectItem>
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}

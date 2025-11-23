@@ -1,2 +1,2 @@
-import type { SuggestGeoStrategyOutput } from '@/ai/flows/suggest-geo-strategy';
-export type AdPlan = SuggestGeoStrategyOutput;
+import type { GenerateAdPlanOutput } from '@/ai/flows/generate-ad-plan';
+export type AdPlan = GenerateAdPlanOutput;
