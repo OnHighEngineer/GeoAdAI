@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { AdPlan } from '@/lib/types';
 import type { GenerateAdPlanInput } from '@/ai/flows/generate-ad-plan';
 import { Welcome } from '@/components/dashboard/welcome';
@@ -9,23 +9,55 @@ import { Loading } from '@/components/dashboard/loading';
 import { AdPlanDisplay } from '@/components/dashboard/ad-plan-display';
 import { generateAdPlanAction } from './actions';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Share2, Save, Rocket, ClipboardCheck } from 'lucide-react';
+import { ArrowLeft, Share2, Save, Rocket, ClipboardCheck, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 type AppState = 'welcome' | 'form' | 'loading' | 'results';
+
+const SAVED_PLAN_KEY = 'adwiseai_saved_plan';
 
 export default function Home() {
   const [appState, setAppState] = useState<AppState>('welcome');
   const [adPlan, setAdPlan] = useState<AdPlan | null>(null);
+  const [isPlanSaved, setIsPlanSaved] = useState(false);
   const { toast } = useToast();
+
+  useEffect(() => {
+    // On initial load, check if a plan is saved in local storage
+    const savedPlanJson = localStorage.getItem(SAVED_PLAN_KEY);
+    if (savedPlanJson) {
+      try {
+        const savedPlan = JSON.parse(savedPlanJson);
+        setAdPlan(savedPlan);
+        setAppState('results');
+        setIsPlanSaved(true);
+      } catch (e) {
+        console.error("Failed to parse saved ad plan", e);
+        localStorage.removeItem(SAVED_PLAN_KEY);
+      }
+    }
+  }, []);
 
   const handleStart = () => {
     setAppState('form');
   };
   
   const handleBackToForm = () => {
-	setAdPlan(null);
-	setAppState('form');
+    setAdPlan(null);
+    setIsPlanSaved(false);
+    localStorage.removeItem(SAVED_PLAN_KEY);
+    setAppState('form');
   }
 
   const handleSubmit = async (values: GenerateAdPlanInput) => {
@@ -34,6 +66,7 @@ export default function Home() {
     if (result.success) {
       setAdPlan(result.data);
       setAppState('results');
+      setIsPlanSaved(false); // A new plan is not saved by default
     } else {
       toast({
         variant: 'destructive',
@@ -56,12 +89,35 @@ export default function Home() {
     });
   };
 
-  const handleComingSoon = (feature: string) => {
-    toast({
-      title: 'Coming Soon!',
-      description: `${feature} functionality is not yet implemented.`,
-    });
+  const handleSave = () => {
+    if (adPlan) {
+      localStorage.setItem(SAVED_PLAN_KEY, JSON.stringify(adPlan));
+      setIsPlanSaved(true);
+      toast({
+        title: 'Plan Saved!',
+        description: 'Your ad plan has been saved to your browser.',
+      });
+    }
   };
+
+  const handleDelete = () => {
+    localStorage.removeItem(SAVED_PLAN_KEY);
+    setIsPlanSaved(false);
+    toast({
+        title: 'Plan Deleted',
+        description: 'Your saved ad plan has been removed.',
+        variant: 'destructive'
+    });
+  }
+
+  const handleLaunch = () => {
+    toast({
+        title: '🚀 Campaign Launched!',
+        description: 'Your campaign is now live. (This is a simulation)',
+        className: 'bg-green-500 text-white',
+    });
+  }
+
 
   const renderContent = () => {
     switch (appState) {
@@ -96,8 +152,31 @@ export default function Home() {
             {appState === 'results' && (
                 <>
                     <Button variant="outline" onClick={handleShare}><Share2 className="mr-2 h-4 w-4" /> Share</Button>
-                    <Button variant="outline" onClick={() => handleComingSoon('Save')}><Save className="mr-2 h-4 w-4" /> Save</Button>
-                    <Button onClick={() => handleComingSoon('Launch Campaign')}><Rocket className="mr-2 h-4 w-4" /> Launch Campaign</Button>
+                    {isPlanSaved ? (
+                         <Button variant="destructive" onClick={handleDelete}><Trash2 className="mr-2 h-4 w-4" /> Delete Plan</Button>
+                    ) : (
+                        <Button variant="outline" onClick={handleSave}><Save className="mr-2 h-4 w-4" /> Save</Button>
+                    )}
+                   
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button><Rocket className="mr-2 h-4 w-4" /> Launch Campaign</Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Are you ready to launch?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This will simulate launching your ad campaign. In a real-world application, this would trigger integration with an ad platform.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction onClick={handleLaunch}>
+                            Yes, Launch It!
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                 </>
             )}
         </div>
@@ -107,7 +186,25 @@ export default function Home() {
       </main>
       {appState === 'results' && (
         <footer className="sticky bottom-0 bg-background/80 backdrop-blur-lg p-4 border-t text-center">
-            <Button size="lg" onClick={() => handleComingSoon('Launch Campaign')}><Rocket className="mr-2 h-5 w-5"/>Launch Campaign & Go Live</Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button size="lg"><Rocket className="mr-2 h-5 w-5"/>Launch Campaign & Go Live</Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Are you ready to launch?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This will simulate launching your ad campaign. In a real-world application, this would trigger integration with an ad platform.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleLaunch}>
+                      Yes, Launch It!
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </footer>
       )}
     </div>
